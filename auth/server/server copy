@@ -1,0 +1,29 @@
+package server
+
+import (
+	"fmt"
+	"log"
+	"r-booker/auth/config"
+
+	"github.com/fasthttp/router"
+	"github.com/valyala/fasthttp"
+)
+
+func Login(ctx *fasthttp.RequestCtx) {
+	ctx.WriteString("Hello, world!")
+}
+
+func Start() {
+	log.Default().Println("Starting server...")
+
+	conf := config.Config{
+		Port: "8080",
+		Host: "localhost",
+	}
+
+	r := router.New()
+
+	r.GET("/login", Login)
+
+	log.Fatal(fasthttp.ListenAndServe(fmt.Sprintf("%s:%s", conf.Host, conf.Port), r.Handler))
+}

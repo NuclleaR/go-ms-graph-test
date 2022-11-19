@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option go_package = "server/service";
+
+import "validate/validate.proto";
+
+package auth;
+
+service Auth {
+  rpc Login (LoginRequest) returns (LoginResponse) {}
+}
+
+message LoginRequest {
+  string username = 1 [(validate.rules).string = {min_len: 1, max_len: 256}];
+  string password = 2 [(validate.rules).string = {min_len: 8, max_len: 256}];
+}
+
+message LoginResponse {
+  string token = 1;
+}
