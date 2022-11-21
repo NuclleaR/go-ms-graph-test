@@ -1,16 +1,14 @@
 package main
 
 import (
-	"r-booker/auth/config"
 	"r-booker/auth/server"
+	"r-booker/common"
 )
 
 func main() {
-	s := server.AuthServer{}
-	conf := config.Config{
-		Host: "localhost",
-		Port: "8081",
-	}
+	conf := common.NewConfigFromFlags()
+
+	s := server.AuthService{}
 
 	s.Start(conf)
 }

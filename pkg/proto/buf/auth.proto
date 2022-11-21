@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "server/service";
+option go_package = "service/auth";
 
 import "validate/validate.proto";
 
@@ -16,5 +16,5 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  string token = 1;
+  string accessToken = 1;
 }

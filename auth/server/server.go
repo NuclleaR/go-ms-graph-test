@@ -5,25 +5,36 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"r-booker/auth/config"
-	"r-booker/auth/server/service"
+	"r-booker/common"
+	"r-booker/proto/service/auth"
+	"r-booker/proto/service/health"
 
 	"google.golang.org/grpc"
 )
 
-type AuthServer struct {
-	service.UnimplementedAuthServer
+type AuthService struct {
+	auth.UnimplementedAuthServer
+	health.UnimplementedHealthServer
+}
+
+// Check implements health.HealthServer
+func (*AuthService) Check(context.Context, *health.HealthCheckRequest) (*health.HealthCheckResponse, error) {
+	panic("unimplemented")
+}
+
+// Watch implements health.HealthServer
+func (*AuthService) Watch(*health.HealthCheckRequest, health.Health_WatchServer) error {
+	panic("unimplemented")
 }
 
 // Login implements service.AuthServer
-func (*AuthServer) Login(context.Context, *service.LoginRequest) (*service.LoginResponse, error) {
-	return &service.LoginResponse{
-		Token: "token",
+func (*AuthService) Login(context.Context, *auth.LoginRequest) (*auth.LoginResponse, error) {
+	return &auth.LoginResponse{
+		AccessToken: "hello-token",
 	}, nil
 }
 
-func (as *AuthServer) Start(conf config.Config) {
-	// flag.Parse()
+func (as *AuthService) Start(conf common.Config) {
 
 	log.Println("Starting server...")
 
@@ -31,13 +42,14 @@ func (as *AuthServer) Start(conf config.Config) {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	} else {
-		log.Printf("listening on tcp %s:%s", conf.Host, conf.Port)
+		log.Printf("gRPC server is running on %s:%s", conf.Host, conf.Port)
 	}
 
 	var opts []grpc.ServerOption
 
 	grpcServer := grpc.NewServer(opts...)
-	service.RegisterAuthServer(grpcServer, as)
+	auth.RegisterAuthServer(grpcServer, as)
+	health.RegisterHealthServer(grpcServer, as)
 
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %v", err)

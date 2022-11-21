@@ -13,10 +13,11 @@ services:
     environment:
       - MODULE_PREFIX=r-booker/auth
     volumes:
-      - ./proto:/go/proto
+      - ./buf:/go/proto
       - .:/go/genproto
     command:
       - bash
       - -c
       - |
         protoc -I proto-common:proto proto/auth.proto --go_out=/go/genproto --go-grpc_out=/go/genproto --validate_out=lang=go:/go/genproto
+        protoc -I proto proto/health.proto --go_out=/go/genproto --go-grpc_out=/go/genproto
